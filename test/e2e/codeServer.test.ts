@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 import { STORAGE } from "../utils/constants"
 import { CodeServer } from "./models/CodeServer"
 
-test.describe("Workbench", () => {
+test.describe("CodeServer", () => {
   // Create a new context with the saved storage state
   // so we don't have to logged in
   const options: any = {}
@@ -29,5 +29,10 @@ test.describe("Workbench", () => {
     // find workspaceStorage in the Explorer menu, which would be open in the User folder
     // which is the default folder that opens
     expect(await page.isVisible("text=workspaceStorage")).toBe(true)
+  })
+
+  test("should show the Integrated Terminal", options, async ({ page }) => {
+    await codeServer.viewTerminal()
+    expect(await page.isVisible("#terminal")).toBe(true)
   })
 })
