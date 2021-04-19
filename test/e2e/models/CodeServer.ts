@@ -30,4 +30,18 @@ export class CodeServer {
       await this.page.waitForLoadState("networkidle")
     }
   }
+
+  /**
+   * Toggles the integrated terminal if not already in view
+   */
+  async viewTerminal() {
+    // Check if Terminal is already in view
+    const isTerminalInView = await this.page.isVisible("#terminal")
+
+    if (!isTerminalInView) {
+      // Open using default keyboard shortcut
+      await this.page.keyboard.press("Control+Backquote")
+      await this.page.waitForSelector("#terminal")
+    }
+  }
 }
