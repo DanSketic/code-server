@@ -44,4 +44,11 @@ export class CodeServer {
       await this.page.waitForSelector("#terminal")
     }
   }
+
+  async quickOpen(input: string) {
+    await this.page.keyboard.press("Meta+P")
+    await this.page.waitForSelector('[aria-describedby="quickInput_message"]')
+    await this.page.keyboard.type(input)
+    await this.page.keyboard.press("Enter")
+  }
 }
