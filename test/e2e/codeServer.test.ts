@@ -36,7 +36,7 @@ test.describe("CodeServer", () => {
     expect(await page.isVisible("#terminal")).toBe(true)
   })
 
-  test.only("should open a file with quickOpen", options, async ({ page }) => {
+  test("should open a file with quickOpen", options, async ({ page }) => {
     await codeServer.openFolder()
     await codeServer.quickOpen("extensions.json")
     // If the file is open, we will see an empty array

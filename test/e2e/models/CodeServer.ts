@@ -33,6 +33,7 @@ export class CodeServer {
 
   /**
    * Toggles the integrated terminal if not already in view
+   * and focuses it
    */
   async viewTerminal() {
     // Check if Terminal is already in view
@@ -40,15 +41,21 @@ export class CodeServer {
 
     if (!isTerminalInView) {
       // Open using default keyboard shortcut
-      await this.page.keyboard.press("Control+Backquote")
+      await this.focusTerminal()
       await this.page.waitForSelector("#terminal")
     }
+  }
+
+  async focusTerminal() {
+    await this.page.keyboard.press("Control+Backquote")
   }
 
   async quickOpen(input: string) {
     await this.page.keyboard.press("Meta+P")
     await this.page.waitForSelector('[aria-describedby="quickInput_message"]')
     await this.page.keyboard.type(input)
+    await this.page.waitForTimeout(2000)
     await this.page.keyboard.press("Enter")
+    await this.page.waitForTimeout(2000)
   }
 }
