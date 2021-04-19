@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { CODE_SERVER_ADDRESS, STORAGE } from "../utils/constants"
+import { STORAGE } from "../utils/constants"
 import { CodeServer } from "./models/CodeServer"
 
 test.describe("Workbench", () => {
