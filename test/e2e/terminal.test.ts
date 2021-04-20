@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test"
+import * as fs from "fs"
+import { tmpdir } from "os"
+import * as path from "path"
+
 import { STORAGE } from "../utils/constants"
 import { CodeServer } from "./models/CodeServer"
 
@@ -6,7 +10,7 @@ test.describe("Integrated Terminal", () => {
   // Create a new context with the saved storage state
   // so we don't have to logged in
   const options: any = {}
-  const testFileName = "hello.txt"
+  const testFileName = "test.txt"
   const testString = "new string test from e2e test"
   let codeServer: CodeServer
 
@@ -25,36 +29,35 @@ test.describe("Integrated Terminal", () => {
   })
 
   test("should echo a string to a file", options, async ({ page }) => {
-    // Open the default folder
-    await codeServer.openFolder()
-
+    // TODO@jsjoeio
+    // import tempdir from
+    // src/node/util.ts
+    // TODO use this
+    // ${tmpdir}/tests/${testName}/
+    const tmpFolderPath = fs.mkdtempSync(path.join(tmpdir(), "code-server-test"))
+    const tmpFile = `${tmpFolderPath}${path.sep}${testFileName}`
     // Open terminal and type in value
-    await codeServer.viewTerminal()
+    // await codeServer.viewTerminal()
     await codeServer.focusTerminal()
 
-    await page.keyboard.type(`echo '${testString}' >> ${testFileName}`)
+    await page.keyboard.type(`echo '${testString}' > ${tmpFile}`)
+    // Wait for the typing to finish before hitting enter
+    await page.waitForTimeout(500)
     await page.keyboard.press("Enter")
     await page.waitForTimeout(2000)
-    // It should show up on the left sidebar as a new file
-    const isFileVisible = await page.isVisible(`text="${testFileName}"`)
-    expect(isFileVisible).toBe(true)
 
-    if (isFileVisible) {
-      // Check that the file has the test string in it
-      await codeServer.quickOpen(testFileName)
-      expect(await page.isVisible(`text="${testString}"`)).toBe(true)
+    let fileExists = false
 
-      // Clean up
-      // Remove file
-      await codeServer.focusTerminal()
-      await page.keyboard.type(`rm ${testFileName}`)
-      await page.keyboard.press("Enter")
-      await page.waitForTimeout(2000)
-      // Close the file from workbench
-      // otherwise it will still be visible
-      // and our assertion will fail
-      await page.keyboard.press(`Meta+W`)
-      expect(await page.isVisible(`text="${testString}"`)).toBe(false)
+    try {
+      // Check that the file exists
+      await fs.promises.access(tmpFile, fs.constants.F_OK)
+      fileExists = true
+    } catch (error) {
+      console.error("Could not find file")
     }
+
+    expect(fileExists).toBe(true)
+
+    // TODO delete tmpFolder
   })
 })
