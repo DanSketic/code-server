@@ -29,6 +29,51 @@ export class CodeServer {
       await this.page.keyboard.press("Enter")
       await this.page.waitForLoadState("networkidle")
     }
+    // TODO@jsjoeio
+    // you're not using absolutePath. either remove or use
+  }
+
+  /**
+   * Creates a temproary folder in the User folder
+   * with the name "e2e_test_temp_folder"
+   * unless tempFolderName is passed in
+   */
+  async createTempFolder(tempFolderName = "e2e_test_temp_folder") {
+    // Open User folder
+    await this.openFolder()
+
+    // Click the Explorer file area
+    // Otherwise, when we create a folder, it could create it
+    // in another folder based on where the cursor last was
+    await this.page.click(".explorer-folders-view")
+    // Create new folder
+    await this.page.keyboard.press("Meta+Shift+P")
+    await this.page.keyboard.type("File: New Folder")
+    // Let the typing finish
+    await this.page.waitForTimeout(1000)
+    await this.page.keyboard.press("Enter")
+    await this.page.keyboard.type(tempFolderName)
+    // Let the typing finish
+    await this.page.waitForTimeout(1000)
+    await this.page.keyboard.press("Enter")
+  }
+
+  async deleteTempFolder(tempFolderName = "e2e_test_temp_folder") {
+    // how to delete?
+    // Check if folder is visible
+    const tempFolderSelector = `text=${tempFolderName}`
+    const folderExists = await this.page.isVisible(tempFolderSelector)
+
+    if (folderExists) {
+      await this.page.click(tempFolderSelector, { button: "right" })
+      // Click text=Delete Permanently
+      await this.page.click("text=Delete Permanently")
+
+      // Click text=Delete
+      await this.page.click("text=Delete")
+      // Give it a second to disappear
+      await this.page.waitForTimeout(1000)
+    }
   }
 
   /**
@@ -47,7 +92,12 @@ export class CodeServer {
   }
 
   async focusTerminal() {
+    // TODO@jsjoeio combine viewTerminal and focusTerminal
+    // check if terminal is open before hitting keyboard shortcut
+    // otherwise it will close it
     await this.page.keyboard.press("Control+Backquote")
+    // Give the terminal a second to load, change shells, etc.
+    await this.page.waitForTimeout(1500)
   }
 
   async quickOpen(input: string) {
