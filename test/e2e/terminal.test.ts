@@ -46,17 +46,12 @@ test.describe("Integrated Terminal", () => {
     await page.keyboard.press("Enter")
     await page.waitForTimeout(2000)
 
-    let fileExists = false
-
-    try {
-      // Check that the file exists
-      await fs.promises.access(tmpFile, fs.constants.F_OK)
-      fileExists = true
-    } catch (error) {
-      console.error("Could not find file")
-    }
-
-    expect(fileExists).toBe(true)
+    // .access checks if the file exists without opening it
+    // it doesn't return anything hence why we expect it to
+    // resolve to undefined
+    // If the promise rejects (i.e. the file doesn't exist)
+    // then the assertion will fail
+    expect(fs.promises.access(tmpFile)).resolves.toBeUndefined()
 
     // TODO delete tmpFolder
   })
