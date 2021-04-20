@@ -92,12 +92,17 @@ export class CodeServer {
   }
 
   async focusTerminal() {
-    // TODO@jsjoeio combine viewTerminal and focusTerminal
-    // check if terminal is open before hitting keyboard shortcut
-    // otherwise it will close it
-    await this.page.keyboard.press("Control+Backquote")
-    // Give the terminal a second to load, change shells, etc.
-    await this.page.waitForTimeout(1500)
+    // Open using the manu
+    // Click [aria-label="Application Menu"] div[role="none"]
+    await this.page.click('[aria-label="Application Menu"] div[role="none"]')
+
+    // Click text=View
+    await this.page.hover("text=View")
+    await this.page.click("text=View")
+
+    // Click text=Terminal
+    await this.page.hover("text=Terminal")
+    await this.page.click("text=Terminal")
   }
 
   async quickOpen(input: string) {

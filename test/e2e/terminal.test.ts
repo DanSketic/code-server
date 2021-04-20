@@ -40,6 +40,8 @@ test.describe("Integrated Terminal", () => {
     // await codeServer.viewTerminal()
     await codeServer.focusTerminal()
 
+    // give the terminal a second to load
+    await page.waitForTimeout(3000)
     await page.keyboard.type(`echo '${testString}' > ${tmpFile}`)
     // Wait for the typing to finish before hitting enter
     await page.waitForTimeout(500)
@@ -51,8 +53,13 @@ test.describe("Integrated Terminal", () => {
     // resolve to undefined
     // If the promise rejects (i.e. the file doesn't exist)
     // then the assertion will fail
-    expect(fs.promises.access(tmpFile)).resolves.toBeUndefined()
+    await expect(fs.promises.access(tmpFile)).resolves.toBeUndefined()
 
-    // TODO delete tmpFolder
+    await fs.promises.rmdir(tmpFolderPath, { recursive: true })
+    // Make sure neither file nor folder exist
+    // @ts-ignore
+    expect(fs.promises.access(tmpFile)).rejects.toThrowError(/no such file or directory/)
+    // @ts-ignore
+    expect(fs.promises.access(tmpFolderPath)).rejects.toThrowError(/no such file or directory/)
   })
 })
