@@ -57,6 +57,8 @@ test.describe("Integrated Terminal", () => {
 
     await fs.promises.rmdir(tmpFolderPath, { recursive: true })
     // Make sure neither file nor folder exist
+    // Note: We have to use ts-ignore because of an upstream typing error
+    // See: https://github.com/microsoft/folio/issues/230#event-4621948411
     // @ts-ignore
     expect(fs.promises.access(tmpFile)).rejects.toThrowError(/no such file or directory/)
     // @ts-ignore
