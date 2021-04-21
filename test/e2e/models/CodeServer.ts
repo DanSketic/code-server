@@ -9,88 +9,21 @@ export class CodeServer {
   constructor(page: Page) {
     this.page = page
   }
+
+  /**
+   * Navigates to CODE_SERVER_ADDRESS
+   */
   async navigate() {
     await this.page.goto(CODE_SERVER_ADDRESS, { waitUntil: "networkidle" })
     // Make sure the editor actually loaded
     await this.page.isVisible("div.monaco-workbench")
   }
-  /**
-   * Opens the default folder /User if no arg passed
-   * @param absolutePath Example: /Users/jp/.local/share/code-server/User/
-   *
-   */
-  async openFolder(absolutePath?: string) {
-    // Check if no folder is opened
-    const folderIsNotOpen = await this.page.isVisible("text=You have not yet opened")
-
-    if (folderIsNotOpen) {
-      // Open the default folder
-      await this.page.keyboard.press("Meta+O")
-      await this.page.keyboard.press("Enter")
-      await this.page.waitForLoadState("networkidle")
-    }
-    // TODO@jsjoeio
-    // you're not using absolutePath. either remove or use
-  }
 
   /**
-   * Creates a temproary folder in the User folder
-   * with the name "e2e_test_temp_folder"
-   * unless tempFolderName is passed in
+   * Focuses Integrated Terminal
+   * by going to the Application Menu
+   * and clicking View > Terminal
    */
-  async createTempFolder(tempFolderName = "e2e_test_temp_folder") {
-    // Open User folder
-    await this.openFolder()
-
-    // Click the Explorer file area
-    // Otherwise, when we create a folder, it could create it
-    // in another folder based on where the cursor last was
-    await this.page.click(".explorer-folders-view")
-    // Create new folder
-    await this.page.keyboard.press("Meta+Shift+P")
-    await this.page.keyboard.type("File: New Folder")
-    // Let the typing finish
-    await this.page.waitForTimeout(1000)
-    await this.page.keyboard.press("Enter")
-    await this.page.keyboard.type(tempFolderName)
-    // Let the typing finish
-    await this.page.waitForTimeout(1000)
-    await this.page.keyboard.press("Enter")
-  }
-
-  async deleteTempFolder(tempFolderName = "e2e_test_temp_folder") {
-    // how to delete?
-    // Check if folder is visible
-    const tempFolderSelector = `text=${tempFolderName}`
-    const folderExists = await this.page.isVisible(tempFolderSelector)
-
-    if (folderExists) {
-      await this.page.click(tempFolderSelector, { button: "right" })
-      // Click text=Delete Permanently
-      await this.page.click("text=Delete Permanently")
-
-      // Click text=Delete
-      await this.page.click("text=Delete")
-      // Give it a second to disappear
-      await this.page.waitForTimeout(1000)
-    }
-  }
-
-  /**
-   * Toggles the integrated terminal if not already in view
-   * and focuses it
-   */
-  async viewTerminal() {
-    // Check if Terminal is already in view
-    const isTerminalInView = await this.page.isVisible("#terminal")
-
-    if (!isTerminalInView) {
-      // Open using default keyboard shortcut
-      await this.focusTerminal()
-      await this.page.waitForSelector("#terminal")
-    }
-  }
-
   async focusTerminal() {
     // Open using the manu
     // Click [aria-label="Application Menu"] div[role="none"]
@@ -103,14 +36,5 @@ export class CodeServer {
     // Click text=Terminal
     await this.page.hover("text=Terminal")
     await this.page.click("text=Terminal")
-  }
-
-  async quickOpen(input: string) {
-    await this.page.keyboard.press("Meta+P")
-    await this.page.waitForSelector('[aria-describedby="quickInput_message"]')
-    await this.page.keyboard.type(input)
-    await this.page.waitForTimeout(2000)
-    await this.page.keyboard.press("Enter")
-    await this.page.waitForTimeout(2000)
   }
 }

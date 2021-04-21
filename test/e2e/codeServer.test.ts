@@ -23,44 +23,8 @@ test.describe("CodeServer", () => {
     await codeServer.navigate()
   })
 
-  test.only("should create and delete a temp folder for testing", options, async ({ page }) => {
-    // open default folder
-    await codeServer.openFolder()
-
-    // find workspaceStorage in the Explorer menu, which would be open in the User folder
-    // which is the default folder that opens
-    expect(await page.isVisible("text=workspaceStorage")).toBe(true)
-    // create temp folder
-
-    await codeServer.createTempFolder()
-
-    // Make sure it exists
-    expect(await page.isVisible("text=e2e_test_temp_folder")).toBe(true)
-
-    await codeServer.deleteTempFolder()
-
-    // Make sure it was deleted
-    expect(await page.isVisible("text=e2e_test_temp_folder")).toBe(false)
-  })
-
-  test("should open the default folder if not open", options, async ({ page }) => {
-    await codeServer.openFolder()
-
-    // find workspaceStorage in the Explorer menu, which would be open in the User folder
-    // which is the default folder that opens
-    expect(await page.isVisible("text=workspaceStorage")).toBe(true)
-  })
-
   test("should show the Integrated Terminal", options, async ({ page }) => {
-    await codeServer.viewTerminal()
+    await codeServer.focusTerminal()
     expect(await page.isVisible("#terminal")).toBe(true)
-  })
-
-  test("should open a file with quickOpen", options, async ({ page }) => {
-    await codeServer.openFolder()
-    await codeServer.quickOpen("extensions.json")
-    // If the file is open, we will see an empty array
-    // assuming no extensions are installed
-    expect(await page.isVisible("text=[]")).toBe(true)
   })
 })
