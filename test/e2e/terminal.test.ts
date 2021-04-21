@@ -37,7 +37,6 @@ test.describe("Integrated Terminal", () => {
     const tmpFolderPath = fs.mkdtempSync(path.join(tmpdir(), "code-server-test"))
     const tmpFile = `${tmpFolderPath}${path.sep}${testFileName}`
     // Open terminal and type in value
-    // await codeServer.viewTerminal()
     await codeServer.focusTerminal()
 
     // give the terminal a second to load
@@ -59,6 +58,7 @@ test.describe("Integrated Terminal", () => {
     // Make sure neither file nor folder exist
     // Note: We have to use ts-ignore because of an upstream typing error
     // See: https://github.com/microsoft/folio/issues/230#event-4621948411
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
     // @ts-ignore
     expect(fs.promises.access(tmpFile)).rejects.toThrowError(/no such file or directory/)
     // @ts-ignore
