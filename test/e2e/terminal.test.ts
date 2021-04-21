@@ -30,7 +30,7 @@ test.describe("Integrated Terminal", () => {
 
   test("should echo a string to a file", options, async ({ page }) => {
     const tmpFolderPath = fs.mkdtempSync(path.join(tmpdir(), "code-server-test"))
-    const tmpFile = `${tmpFolderPath}${path.sep}tests${path.sep}${testFileName}`
+    const tmpFile = `${tmpFolderPath}${path.sep}${testFileName}`
     // Open terminal and type in value
     await codeServer.focusTerminal()
 
